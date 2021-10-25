@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- CDN bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- CDN jquery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- CDN jquery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <style>
+        #mainProg {
+            width: 640px;
+            height: 480px;
+            background-image: url("lodoss_map.jpg");
+            padding: 0;
+        }
+
+        .row {
+            margin: 0;
+            padding: 0;
+        }
+
+        .myCell {
+            margin: 0;
+            padding: 0;
+            height: 40px;
+
+        }
+
+        .mySprite {
+            margin: 0;
+            padding: 0;
+            width: 50px;
+            height: 40px;
+        }
+    </style>
+    <title>Jquery exo TEST5</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <h1>Lodoss Battle Map!</h1>
+        </div>
+        <div class="row justify-content-center my-2">
+            <button id="gameStart" type="button" class="btn btn-info">Start Battle!</button>
+        </div>
+    </div>
+
+    <div id="mainProg" class="container"></div>
+    <div id="myWatch" class="row"></div>
+    <div id="leaderBoard" class="row">
+        <ul id="scoreLine"></ul>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var myCodex = 0;
+            var myPoints = 0;
+            var nPartie = 0;
+
+            for (var i = 0; i < 12; i++) {
+                $("<div id=row" + i + " class=row></div>").appendTo("#mainProg");
+                for (var j = 0; j < 12; j++) {
+                    myCodex++;
+                    $("<div id=cell" + myCodex + " class='col-1 myCell'></div>").appendTo("#row" + i);
+                }
+            }
+            $("<div id='myPoint' class='row'>Points: </div>").appendTo("#mainProg");
+
+            $("#gameStart").click(function () {
+
+                myTimer();
+
+                function getRandomInt(min, max) {
+                    return (Math.floor(Math.random() * (max - min)) + min);
+                }
+
+                nPartie++;
+
+                for (var k = 0; k < 12; k++) {
+                    var mRanI = getRandomInt(1, 144);
+                    if ($("#cell" + mRanI).hasClass("infested")) {
+                        k--;
+                    }
+                    else {
+                        $("#cell" + mRanI).addClass("infested");
+                    }
+                };
+                $("<img class='mySprite' src='sprite.jpg'>").appendTo(".infested");
+                $(".infested").css({ "display": "block", "margin-left": "auto", "margin-right": "auto" });
+
+                $(".myCell").click(function (event) {
+                    if ($(this).hasClass("infested")) {
+                        myPoints++;
+                        $("#myPoint").text("Points: " + myPoints);
+                        $(this).removeClass("infested");
+                        $(this).empty();
+                    }
+                    // else {
+                    //     myPoints--;
+                    //     $("#myPoint").text("Points: " + myPoints);
+                    // }
+                });
+
+                $(".myCell").mouseover(function () {
+                    $(this).css("border", "1px solid red");
+                });
+                $(".myCell").mouseout(function () {
+                    $(this).css("border", "none");
+                });
+
+                function myTimer() {
+                    let myTime = new Date().getTime();
+                    let myCD = myTime + 5000;
+                    let affCD = 0;
+                    let myInterval = setInterval(function () {
+                        currTime = new Date().getTime();
+                        affCD = myCD - currTime;
+                        if (affCD > 0) {
+                            $("#myWatch").text(affCD);
+                        }
+                        else {
+                            $("#myWatch").text("0");
+                            clearInterval(myInterval);
+                        }
+                    }, 10);
+                }
+
+                setTimeout(function () {
+                    $(".infested").empty();
+                    $(".myCell").removeClass("infested");
+                    alert("You've got " + myPoints + " kills");
+                    var myScoreLine = myPoints;
+                    $("<li>Partie " + nPartie + " score: " + myScoreLine + "</li>").appendTo("#scoreLine")
+                    myPoints = 0;
+                    $("#myPoint").text("Points: " + myPoints);
+                }, 5000);
+            });
+
+        });
+    </script>
+</body>
+
+</html>
